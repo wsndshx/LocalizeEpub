@@ -3,8 +3,6 @@ package core
 import (
 	"archive/zip"
 	"errors"
-	"fmt"
-	"io/fs"
 	"io/ioutil"
 	"os"
 	"path"
@@ -66,12 +64,12 @@ func Unzip(path string) error {
 	}
 
 	// 列出解压后的目录树
-	err = fs.WalkDir(rootFS, ".", func(path string, d fs.DirEntry, err error) error {
-		fmt.Println(path)
-		return nil
-	})
-	if err != nil {
-		panic(err)
-	}
+	// err = fs.WalkDir(rootFS, ".", func(path string, d fs.DirEntry, err error) error {
+	// 	fmt.Println(path)
+	// 	return nil
+	// })
+	// if err != nil {
+	// 	panic(err)
+	// }
 	return nil
 }
