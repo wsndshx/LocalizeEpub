@@ -9,3 +9,20 @@
 在程序界面的左边选择你需要转换的epub文件，右边设置转换后的文件输出路径和名称。选择好后在`Model`中选择你想使用的转换模式，并且按下`转换`即可。
 
 界面的最下方为一个辣鸡的假终端，用于输出日志（虽然没啥用）。
+
+## 翻译错误
+
+由于本软件使用了繁化姬的提供的 API 进行翻译，软件本身并不进行转换工作。若您发现有翻译错误的部分，可以在下面的这些地方进行反馈。
+
+- [繁化姬](https://zhconvert.org/)
+- [繁化姬 GitHub 讨论页](https://github.com/Fanhuaji/discussion/issues)
+- [繁化姬 Telegram 群組](https://t.me/fanhuaji)
+
+## 感谢
+
+本项目使用了以下项目：
+
+- [繁化姬](https://zhconvert.org/)
+- [psanford/memfs: In-memory implementation of Go's `io/fs.FS` interface](https://github.com/psanford/memfs)
+- [be5invis/Sarasa-Gothic: Sarasa Gothic / 更纱黑体 / 更紗黑體 / 更紗ゴシック / 사라사 고딕](https://github.com/be5invis/Sarasa-Gothic)
+- [fyne-io/fyne: Cross platform GUI in Go inspired by Material Design](https://github.com/fyne-io/fyne)
