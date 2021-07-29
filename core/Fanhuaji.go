@@ -3,12 +3,14 @@ package core
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/fs"
 	"io/ioutil"
 	"net/http"
 	"path"
 )
+
+var Input string = ""
+var Output string = ""
 
 var Mode map[string]string = map[string]string{
 	"简体化":   "Simplified",
@@ -36,7 +38,7 @@ func Conversion(model string) error {
 	data["converter"] = Mode[model]
 	err := fs.WalkDir(rootFS, ".", func(Path string, d fs.DirEntry, err error) error {
 		if path.Ext(Path) == ".xhtml" || path.Ext(Path) == ".ncx" {
-			fmt.Println(Path)
+			LogInfo.Println(Path)
 			// 读取文件内容
 			content, err := fs.ReadFile(rootFS, Path)
 			if err != nil {

@@ -10,12 +10,14 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/psanford/memfs"
 )
 
 var rootFS *memfs.FS
+var LogFS *memfs.FS
 
 // 解压的目录
 var tmp string = "."
@@ -23,6 +25,40 @@ var tmp string = "."
 func init() {
 	//新建一个文件系统
 	rootFS = memfs.New()
+	// 创建log
+	LogFS = memfs.New()
+}
+
+func Start(model string) error {
+	// 假设前面有个输入文件路径的
+	err := Open(Input)
+	if err != nil {
+		return err
+	}
+	// 解压文件
+	err = Unzip(Input)
+	if err != nil {
+		return err
+	}
+	// 转换文件
+	LogInfo.Println("开始转换文件")
+	err = Conversion(model)
+	if err != nil {
+		return err
+	}
+	// 压缩回去
+	LogInfo.Println("开始输出文件")
+	err = Zip(Output)
+	if err != nil {
+		return err
+	}
+	LogInfo.Println("文件输出完成")
+
+	// 扔掉没用的文件
+	rootFS = nil
+	runtime.GC()
+	rootFS = memfs.New()
+	return nil
 }
 
 // Open 打开输入的epub文件
@@ -49,7 +85,7 @@ func Unzip(path string) error {
 	}
 	err = rootFS.MkdirAll(tmp, 0777)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	for _, file := range miao.File {
@@ -70,7 +106,10 @@ func Unzip(path string) error {
 
 		data, _ := ioutil.ReadAll(fileReader)
 
-		rootFS.WriteFile(unzippath, data, file.Mode())
+		err = rootFS.WriteFile(unzippath, data, file.Mode())
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -83,18 +122,18 @@ func Zip(target string) error {
 	if err != nil {
 		return err
 	}
-
 	defer zipfile.Close()
 
 	//创建zip.Writer
 	zw := zip.NewWriter(zipfile)
-
 	defer zw.Close()
 
 	miao, err := rootFS.Open(tmp)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	defer miao.Close()
+
 	info, err := miao.Stat()
 	if err != nil {
 		return err
@@ -134,6 +173,7 @@ func Zip(target string) error {
 		if info.IsDir() {
 			return nil
 		}
+
 		//写入文件内容
 		file, err := fs.ReadFile(rootFS, Path)
 		if err != nil {
