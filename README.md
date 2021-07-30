@@ -4,6 +4,20 @@
 
 ![image-20210729215236221](README/image-20210729215236221.png)
 
+## 安装
+
+### 成品
+
+前往该项目的[发布页](https://github.com/wsndshx/LocalizeEpub/releases)下载最新的构建版本
+
+### 构建
+
+```shell
+git clone https://github.com/wsndshx/LocalizeEpub.git
+cd LocalizeEpub
+make
+```
+
 ## 使用说明
 
 在程序界面的左边选择你需要转换的epub文件，右边设置转换后的文件输出路径和名称。选择好后在`Model`中选择你想使用的转换模式，并且按下`转换`即可。
