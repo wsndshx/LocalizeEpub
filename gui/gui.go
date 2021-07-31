@@ -20,7 +20,7 @@ var button *widget.Button
 var Terminal *widget.TextGrid
 
 func init() {
-	myApp := app.New()
+	myApp := app.NewWithID("main")
 	// 设置界面主题
 	myApp.Settings().SetTheme(&myTheme{})
 	// 设置标题
@@ -30,9 +30,10 @@ func init() {
 }
 
 func Start() {
-	core.LogInfo.Println("咕噜咕噜~")
-	core.LogInfo.Println("项目发布地址: github.com/wsndshx/LocalizeEpub")
-	myWindow.SetContent(container.New(layout.NewGridLayoutWithRows(3), file(), start(), terminal()))
+	// myWindow.SetContent(container.New(layout.NewGridLayoutWithRows(3), file(), start(), terminal()))
+	top := container.New(layout.NewVBoxLayout(), file(), start())
+	myWindow.SetContent(container.New(layout.NewBorderLayout(top, nil, nil, nil), top, terminal()))
+
 	// 刷新终端
 	go func() {
 		for {
@@ -45,20 +46,21 @@ func Start() {
 			time.Sleep(time.Duration(1) * time.Second)
 		}
 	}()
+	core.LogInfo.Println("咕噜咕噜~")
+	core.LogInfo.Println("项目发布地址: github.com/wsndshx/LocalizeEpub")
 	myWindow.ShowAndRun()
 }
 
 func terminal() *fyne.Container {
 	// 终端区域
 	Terminal = widget.NewTextGrid()
-	box := container.NewScroll(container.New(layout.NewHBoxLayout(), container.New(layout.NewVBoxLayout(), Terminal)))
+	box := container.NewScroll(Terminal)
 
 	// 卡片
 	care := widget.NewCard("", "", box)
 
 	content := container.New(layout.NewPaddedLayout(), care)
 	return content
-
 }
 
 func start() *fyne.Container {
@@ -76,11 +78,12 @@ func start() *fyne.Container {
 		})
 
 	// 卡片
+	model.Resize(model.MinSize())
 	care := widget.NewCard("Model", "", model)
 
 	// 按钮
 	button = widget.NewButton("转换", func() {
-		core.LogInfo.Println("开始转换喵~")
+		core.LogInfo.Printf("转换模式: %s 输入文件: %s 输出文件: %s\n", model.Selected, core.Input, core.Output)
 		go func() {
 			model.Disable()
 			button.Disable()
@@ -96,10 +99,7 @@ func start() *fyne.Container {
 			button.Enable()
 		}()
 	})
-	// care.Resize(care.MinSize())
-	miao := container.NewHBox(care, container.New(layout.NewCenterLayout(), button))
-	miao.Resize(miao.MinSize())
-	content := container.New(layout.NewCenterLayout(), miao)
+	content := container.New(layout.NewCenterLayout(), container.NewHBox(care, button))
 	return content
 }
 
