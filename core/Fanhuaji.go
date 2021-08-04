@@ -37,7 +37,7 @@ func Conversion(model string) error {
 	data := make(map[string]interface{})
 	data["converter"] = Mode[model]
 	err := fs.WalkDir(rootFS, ".", func(Path string, d fs.DirEntry, err error) error {
-		if path.Ext(Path) == ".xhtml" || path.Ext(Path) == ".ncx" {
+		if path.Ext(Path) == ".xhtml" || path.Ext(Path) == ".ncx" || path.Ext(Path) == ".opf" {
 			LogInfo.Println(Path)
 			// 读取文件内容
 			content, err := fs.ReadFile(rootFS, Path)
