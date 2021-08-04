@@ -18,6 +18,7 @@ var myWindow fyne.Window
 var anniu bool = true
 var button *widget.Button
 var Terminal *widget.TextGrid
+var box *container.Scroll
 
 func init() {
 	myApp := app.NewWithID("main")
@@ -43,6 +44,7 @@ func Start() {
 				return
 			}
 			Terminal.SetText(string(log))
+			box.ScrollToBottom()
 			time.Sleep(time.Duration(1) * time.Second)
 		}
 	}()
@@ -54,7 +56,7 @@ func Start() {
 func terminal() *fyne.Container {
 	// 终端区域
 	Terminal = widget.NewTextGrid()
-	box := container.NewScroll(Terminal)
+	box = container.NewScroll(Terminal)
 
 	// 卡片
 	care := widget.NewCard("", "", box)
@@ -95,6 +97,7 @@ func start() *fyne.Container {
 				button.Enable()
 				return
 			}
+			dialog.ShowInformation("转换完成", "你选择的文件已经转换完成了喵~", myWindow)
 			model.Enable()
 			button.Enable()
 		}()
