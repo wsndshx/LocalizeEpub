@@ -19,6 +19,7 @@ var anniu bool = true
 var button *widget.Button
 var Terminal *widget.TextGrid
 var box *container.Scroll
+var ch chan bool
 
 func init() {
 	myApp := app.NewWithID("main")
@@ -28,24 +29,31 @@ func init() {
 	myWindow = myApp.NewWindow("LocalizeEpub")
 	// 设置窗口大小
 	myWindow.Resize(fyne.NewSize(800, 400))
+	ch = make(chan bool)
 }
 
 func Start() {
-	// myWindow.SetContent(container.New(layout.NewGridLayoutWithRows(3), file(), start(), terminal()))
 	top := container.New(layout.NewVBoxLayout(), file(), start())
 	myWindow.SetContent(container.New(layout.NewBorderLayout(top, nil, nil, nil), top, terminal()))
 
 	// 刷新终端
 	go func() {
+		ticker := time.NewTicker(1 * time.Second)
+		run := false
 		for {
-			log, err := fs.ReadFile(core.LogFS, "log")
-			if err != nil {
-				dialog.ShowError(err, myWindow)
-				return
+			select {
+			case <-ticker.C:
+				log, err := fs.ReadFile(core.LogFS, "log")
+				if err != nil {
+					dialog.ShowError(err, myWindow)
+					return
+				}
+				Terminal.SetText(string(log))
+				if run {
+					box.ScrollToBottom()
+				}
+			case run = <-ch:
 			}
-			Terminal.SetText(string(log))
-			box.ScrollToBottom()
-			time.Sleep(time.Duration(1) * time.Second)
 		}
 	}()
 	core.LogInfo.Println("咕噜咕噜~")
@@ -89,6 +97,7 @@ func start() *fyne.Container {
 		go func() {
 			model.Disable()
 			button.Disable()
+			ch <- true
 			err := core.Start(model.Selected)
 			if err != nil {
 				core.LogError.Println(err)
@@ -98,8 +107,10 @@ func start() *fyne.Container {
 				return
 			}
 			dialog.ShowInformation("转换完成", "你选择的文件已经转换完成了喵~", myWindow)
+			ch <- false
 			model.Enable()
 			button.Enable()
+			return
 		}()
 	})
 	content := container.New(layout.NewCenterLayout(), container.NewHBox(care, button))
