@@ -1,5 +1,7 @@
 # LocalizeEpub
 
+> 如果你只需要在Windows平台下使用, 这里有个看起来会更好一些的: [LocalizeEpub_For_Windows](https://github.com/wsndshx/LocalizeEpub_For_Windows)
+
 使用繁化姬(Fanhuaji)对EPUB文件进行繁化/简化操作
 
 ![image-20210729215236221](README/image-20210729215236221.png)
